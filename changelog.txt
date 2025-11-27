@@ -23,6 +23,8 @@ Version legend:
  * Added support for Limited Mode (Non-Admin execution)
  * Added Debug-Tron.ps1 for sandboxed testing
  * Dropped support for Windows XP/Vista (Requires Win 7 SP1+)
+ * Repository cleanup: Removed test extracts and Sandbox directories
+ * Privacy enhancements: Anonymized git history and removed personal metadata
 
 #########################
 # v12.0.9 // 2025-01-09 #

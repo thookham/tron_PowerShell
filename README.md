@@ -15,6 +15,7 @@ This PowerShell version includes several key improvements:
 -   **🧩 Modular Design**: Code is organized into distinct modules (`Core`, `Stages`), making it easier to read, debug, and extend.
 -   **🛡️ Enhanced Safety**: Better error handling and "Dry Run" capabilities allow you to test the script without making changes.
 -   **🧪 Sandbox Mode**: Includes a `Debug-Tron.ps1` script to safely test logic in a local sandbox environment.
+-   **🔒 Privacy Focused**: Repository has been scrubbed of personal metadata and git history anonymized for privacy.
 
 ---
 
