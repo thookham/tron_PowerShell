@@ -15,6 +15,16 @@ Version legend:
 
 
 #########################
+# v1.0.0 // 2025-11-27  #
+#########################
+ * Initial release of Tron PowerShell Refactor
+ * Ported core logic from Batch to native PowerShell
+ * Added modular structure (Tron.ps1, Modules/, Config/)
+ * Added support for Limited Mode (Non-Admin execution)
+ * Added Debug-Tron.ps1 for sandboxed testing
+ * Dropped support for Windows XP/Vista (Requires Win 7 SP1+)
+
+#########################
 # v12.0.9 // 2025-01-09 #
 #########################
  . tron.bat                        v1.2.3
