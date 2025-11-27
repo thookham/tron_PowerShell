@@ -35,7 +35,8 @@ function Invoke-Stage1-TempClean {
     }
     
     Write-TronLog "Cleaning Temp folders..." "INFO"
-    $TempFolders = @($env:TEMP, "C:\Windows\Temp")
+    $Paths = Get-TronPaths
+    $TempFolders = @($Paths.Temp, $Paths.WindowsTemp)
     foreach ($Folder in $TempFolders) {
         if (Test-Path $Folder) {
             Get-ChildItem -Path $Folder -Recurse -Force -ErrorAction SilentlyContinue | Remove-Item -Recurse -Force -ErrorAction SilentlyContinue

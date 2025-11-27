@@ -126,4 +126,26 @@ function Invoke-FetchTools {
     }
 }
 
-Export-ModuleMember -Function Write-TronLog, Get-TronConfig, Get-TronState, Set-TronState, Test-IsAdmin, Invoke-Elevation, Invoke-FetchTools
+$Global:TronPaths = @{
+    Temp        = $env:TEMP
+    WindowsTemp = "C:\Windows\Temp"
+    SystemDrive = $env:SystemDrive
+    Windows     = $env:windir
+}
+
+function Get-TronPaths {
+    return $Global:TronPaths
+}
+
+function Set-TronPaths {
+    param (
+        [hashtable]$NewPaths
+    )
+    foreach ($Key in $NewPaths.Keys) {
+        if ($Global:TronPaths.ContainsKey($Key)) {
+            $Global:TronPaths[$Key] = $NewPaths[$Key]
+        }
+    }
+}
+
+Export-ModuleMember -Function Write-TronLog, Get-TronConfig, Get-TronState, Set-TronState, Test-IsAdmin, Invoke-Elevation, Invoke-FetchTools, Get-TronPaths, Set-TronPaths
