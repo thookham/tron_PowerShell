@@ -34,14 +34,7 @@ if ($SkipDefrag) { $Config.SkipDefrag = $true }
 
 # Setup Logging
 $LogFile = Join-Path $Config.LogPath ("tron_" + (Get-Date -Format "yyyy-MM-dd_HH-mm-ss") + ".log")
-try {
-    if (-not (Test-Path $Config.LogPath)) { New-Item -ItemType Directory -Path $Config.LogPath -Force -ErrorAction Stop | Out-Null }
-}
-catch {
-    Write-Warning "Failed to create log directory at $($Config.LogPath). Falling back to Temp."
-    $Config.LogPath = Join-Path $env:TEMP "TronLogs"
-    if (-not (Test-Path $Config.LogPath)) { New-Item -ItemType Directory -Path $Config.LogPath -Force | Out-Null }
-}
+if (-not (Test-Path $Config.LogPath)) { New-Item -ItemType Directory -Path $Config.LogPath -Force | Out-Null }
 Start-Transcript -Path $LogFile -Append
 
 Write-TronLog "Tron PowerShell v1.0.0" "INFO"
