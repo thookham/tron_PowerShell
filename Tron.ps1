@@ -1,115 +1,129 @@
-# Tron.ps1
-# Main entry point for Tron PowerShell
-
+<#
+.SYNOPSIS
+    Tron - Automated cleaning and disinfection tool (PowerShell Edition)
+.DESCRIPTION
+    Tron is a script that automates a wide variety of system cleaning, disinfection, and repair tasks.
+    This is the modern PowerShell rewrite of the classic batch script.
+.PARAMETER DryRun
+    Skip actual execution of tasks.
+.PARAMETER Verbose
+    Enable verbose logging.
+.PARAMETER SkipDebloat
+    Skip OEM bloatware removal.
+#>
 param (
-    [switch]$Autorun,
     [switch]$DryRun,
     [switch]$Verbose,
+    [switch]$Autorun,
     [switch]$SkipDebloat,
-    [switch]$SkipAntivirusScans,
-    [switch]$SkipCustomScripts,
-    [switch]$SkipDefrag
+    [switch]$SkipUpdate,
+    [switch]$PreserveMetroApps
 )
 
 # --- Initialization ---
-$ErrorActionPreference = "Continue"
-$ScriptPath = $PSScriptRoot
-$ResourcesPath = Join-Path $ScriptPath "Resources"
-$ModulesPath = Join-Path $ScriptPath "Modules"
+$ErrorActionPreference = "Stop"
+$ScriptDir = $PSScriptRoot
 
 # Import Modules
-Import-Module (Join-Path $ModulesPath "Tron.Core.psm1") -Force
-Import-Module (Join-Path $ModulesPath "Tron.Stages.psm1") -Force
+Import-Module "$ScriptDir\Modules\Tron.Core.psm1" -Force
+Import-Module "$ScriptDir\Modules\Tron.Stages.psm1" -Force
 
-# Load Config
-$Config = Get-TronConfig
-
-# Override Config with Flags
-if ($DryRun) { $Config.DryRun = $true }
-if ($Verbose) { $Config.Verbose = $true }
-if ($SkipDebloat) { $Config.SkipDebloat = $true }
-if ($SkipAntivirusScans) { $Config.SkipAntivirusScans = $true }
-if ($SkipCustomScripts) { $Config.SkipCustomScripts = $true }
-if ($SkipDefrag) { $Config.SkipDefrag = $true }
-
-# Setup Logging
-$LogFile = Join-Path $Config.LogPath ("tron_" + (Get-Date -Format "yyyy-MM-dd_HH-mm-ss") + ".log")
+# --- Configuration & Logging ---
 try {
-    if (-not (Test-Path $Config.LogPath)) { New-Item -ItemType Directory -Path $Config.LogPath -Force -ErrorAction Stop | Out-Null }
+    $Config = Get-TronConfig
+    Write-TronLog "Config Type: $($Config.GetType().FullName)" "INFO"
+    Write-TronLog "Config Members: $($Config | Get-Member | Out-String)" "INFO"
+    
+    # Override Config with Parameters
+    if ($DryRun) { $Config.DryRun = $true }
+    if ($Verbose) { $Config.Verbose = $true }
+    if ($Autorun) { $Config.Autorun = $true }
+    if ($SkipDebloat) { $Config.SkipDebloat = $true }
+    if ($SkipUpdate) { $Config.SkipUpdate = $true }
+    if ($PreserveMetroApps) { $Config.PreserveMetroApps = $true }
+
+    Initialize-TronLogging -LogPath $Config.LogFile
 }
 catch {
-    Write-Warning "Failed to create log directory at $($Config.LogPath). Falling back to Temp."
-    $Config.LogPath = Join-Path $env:TEMP "TronLogs"
-    if (-not (Test-Path $Config.LogPath)) { New-Item -ItemType Directory -Path $Config.LogPath -Force | Out-Null }
-}
-Start-Transcript -Path $LogFile -Append
-
-Write-TronLog "Tron PowerShell v1.0.0" "INFO"
-Write-TronLog "Log File: $LogFile" "INFO"
-
-# --- OS & Environment Checks ---
-$OSVersion = [Environment]::OSVersion.Version
-Write-TronLog "OS Version: $OSVersion" "INFO"
-
-if ($OSVersion.Major -lt 6 -or ($OSVersion.Major -eq 6 -and $OSVersion.Minor -lt 1)) {
-    Write-TronLog "Unsupported OS. Windows 7 SP1 or higher is required." "ERROR"
-    Stop-Transcript
+    Write-Host "Critical Error during initialization: $_" -ForegroundColor Red
     exit 1
 }
 
-$PSVersion = $PSVersionTable.PSVersion
-Write-TronLog "PowerShell Version: $PSVersion" "INFO"
+Write-TronLog "Tron PowerShell Edition v1.0.0 Initialized"
+Write-TronLog "Command Line Args: $PSBoundParameters" "DEBUG"
 
-if ($PSVersion.Major -lt 5 -or ($PSVersion.Major -eq 5 -and $PSVersion.Minor -lt 1)) {
-    Write-TronLog "Unsupported PowerShell Version. 5.1 or higher is required." "ERROR"
-    Stop-Transcript
+# --- OS & Prerequisite Checks ---
+Write-TronLog "Checking prerequisites..."
+
+# OS Check (Windows 7 SP1+)
+$OS = Get-CimInstance Win32_OperatingSystem
+if ($OS.Version -lt "6.1.7601") {
+    Write-TronLog "Unsupported OS. Tron requires Windows 7 SP1 or later." "ERROR"
     exit 1
 }
+Write-TronLog "OS Detected: $($OS.Caption) ($($OS.Version))"
 
-# --- Privilege Check ---
-if (Test-IsAdmin) {
-    Write-TronLog "Running as Administrator." "SUCCESS"
-    $Global:TronMode = "Full"
+# Admin Check
+if (-not (Test-IsAdmin)) {
+    Write-TronLog "Tron is NOT running as Administrator." "WARN"
+    Write-TronLog "Attempting to run in Limited Mode (some tasks will be skipped)." "WARN"
+    $Global:TronState.Mode = "Limited"
 }
 else {
-    Write-TronLog "Not running as Administrator." "WARNING"
-    # Attempt Elevation
-    # Note: In a real scenario, we might want to prompt the user before elevating.
-    # For now, we'll try to elevate, and if it fails, fall back to Limited Mode.
-    
-    # Check if we should try to elevate (could be a flag)
-    # If we are already in a recursive call (not easily detected without a flag), we might loop.
-    # But Invoke-Elevation starts a new process and exits this one.
-    
-    # For this implementation, we will assume if the user didn't start as Admin, 
-    # and we are here, we should try to elevate ONCE. 
-    # But since we can't easily track "tried once" without arguments, 
-    # we will default to Limited Mode if not Admin, unless the user explicitly asks for elevation (future feature).
-    # OR we can just warn and proceed in Limited Mode.
-    
-    Write-TronLog "Running in LIMITED MODE. Some features will be skipped." "WARNING"
-    $Global:TronMode = "Limited"
+    Write-TronLog "Running as Administrator."
+    $Global:TronState.Mode = "Standard"
 }
 
-# --- Tool Fetching ---
-if (-not $Config.DryRun) {
-    Invoke-FetchTools -ResourcesPath $ResourcesPath
+if ($Config.DryRun) {
+    Write-TronLog "!!! DRY RUN MODE ENABLED - NO CHANGES WILL BE MADE !!!" "WARN"
+    $Global:TronState.Mode = "DryRun"
 }
 
 # --- Execution ---
-if ($Config.DryRun) {
-    Write-TronLog "DRY RUN ENABLED. No changes will be made." "WARNING"
+try {
+    # Stage 0: Prep
+    Invoke-Stage0
+
+    # Stage 1: TempClean
+    Invoke-Stage1
+
+    # Stage 2: De-bloat
+    if (-not $Config.SkipDebloat) {
+        Invoke-Stage2
+    }
+    else {
+        Write-TronLog "Skipping Stage 2 (De-bloat) per config."
+    }
+
+    # Stage 3: Disinfect
+    Invoke-Stage3
+
+    # Stage 4: Repair
+    Invoke-Stage4
+
+    # Stage 5: Patch
+    if (-not $Config.SkipUpdate) {
+        Invoke-Stage5
+    }
+    else {
+        Write-TronLog "Skipping Stage 5 (Patch) per config."
+    }
+
+    # Stage 6: Optimize
+    Invoke-Stage6
+
+    # Stage 7: Wrap-up
+    Invoke-Stage7
+
+    # Stage 8: Custom Scripts
+    Invoke-Stage8
+
+}
+catch {
+    Write-TronLog "Fatal Error during execution: $_" "ERROR"
+    Write-TronLog "Stack Trace: $($_.ScriptStackTrace)" "DEBUG"
+    exit 1
 }
 
-Invoke-Stage0-Prep -ResourcesPath $ResourcesPath
-Invoke-Stage1-TempClean
-Invoke-Stage2-Debloat -SkipDebloat $Config.SkipDebloat
-Invoke-Stage3-Disinfect -ResourcesPath $ResourcesPath -SkipAntivirusScans $Config.SkipAntivirusScans
-Invoke-Stage4-Repair
-Invoke-Stage5-Patch
-Invoke-Stage6-Optimize -SkipDefrag $Config.SkipDefrag
-Invoke-Stage7-WrapUp
-Invoke-Stage8-Custom -ResourcesPath $ResourcesPath -SkipCustomScripts $Config.SkipCustomScripts
-
-Write-TronLog "Tron Run Complete." "SUCCESS"
-Stop-Transcript
+Write-TronLog "Tron execution complete."
+exit 0
