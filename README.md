@@ -5,6 +5,10 @@
 
 # 🚀 POWERED BY POWERSHELL
 
+[![PowerShell](https://img.shields.io/badge/PowerShell-5.1%2B-blue.svg)](https://microsoft.com/powershell)
+[![License](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE)
+[![Platform](https://img.shields.io/badge/platform-windows-lightgrey.svg)](README.md)
+
 > [!NOTE]
 > This is a **complete rewrite** of Tron in native PowerShell. It is designed to be faster, more modular, and easier to maintain than the original legacy batch script.
 > **Edits powered by Google Gemini Antigravity.**
@@ -27,6 +31,7 @@ This PowerShell version includes several key improvements:
 4.  [Project Structure](#-project-structure)
 5.  [Debugging & Development](#-debugging--development)
 6.  [Full Description of Stages](#-full-description-of-stages)
+7.  [Advanced Documentation](#-advanced-documentation)
 
 ---
 
@@ -156,3 +161,15 @@ Here is a breakdown of what each stage does in the PowerShell version:
 
 ## 🔧 STAGE 8: Custom Scripts
 -   **User Scripts**: Executes any custom `.bat` or `.ps1` scripts placed in the `Resources\Stage_8_Custom_Scripts` folder.
+
+---
+
+# 📚 ADVANCED DOCUMENTATION
+
+For more detailed information, please refer to the following documents:
+
+-   [**ARCHITECTURE.md**](ARCHITECTURE.md): Deep dive into the modular design and code structure.
+-   [**BUILDING.md**](BUILDING.md): Instructions for building release packages from source.
+-   [**ROADMAP.md**](ROADMAP.md): Future development plans and goals.
+-   [**SECURITY.md**](SECURITY.md): Security policy and vulnerability reporting.
+-   [**CONTRIBUTING.md**](CONTRIBUTING.md): Guidelines for contributing to the project.
