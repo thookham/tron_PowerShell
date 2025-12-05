@@ -1,6 +1,9 @@
 # Tron.Stages.psm1
 # Stage logic for Tron PowerShell
 
+Import-Module "$PSScriptRoot\Tron.Telemetry.psm1" -ErrorAction SilentlyContinue
+
+
 function Invoke-Stage0 {
     Write-TronLog "Stage 0: Prep begin..."
 
@@ -436,25 +439,9 @@ function Invoke-Stage4 {
 
     # 5. Telemetry Removal
     if (-not $Global:TronState.Config.SkipTelemetry) {
-        Write-TronLog "Launch job 'Kill Microsoft telemetry'..."
-        if (-not $Global:TronState.Config.DryRun) {
-            # Win10
-            if ([Environment]::OSVersion.Version.Major -eq 10) {
-                $TelemScript = "$StagePath\disable_windows_telemetry\purge_windows_10_telemetry.bat"
-                if (Test-Path $TelemScript) {
-                    Start-Process -FilePath "cmd.exe" -ArgumentList "/c `"$TelemScript`"" -Wait -WindowStyle Hidden
-                }
-            }
-            # Win7/8
-            elseif ([Environment]::OSVersion.Version.Major -eq 6) {
-                $TelemScript = "$StagePath\disable_windows_telemetry\purge_windows_7-8-81_telemetry.bat"
-                if (Test-Path $TelemScript) {
-                    Start-Process -FilePath "cmd.exe" -ArgumentList "/c `"$TelemScript`"" -Wait -WindowStyle Hidden
-                }
-            }
-        }
+        Invoke-TelemetryCleanup -StagePath $StagePath
     }
-
+    
     # 6. Disable NVIDIA Telemetry
     Write-TronLog "Launch job 'Disable NVIDIA telemetry'..."
     if (-not $Global:TronState.Config.DryRun) {
@@ -482,13 +469,8 @@ function Invoke-Stage4 {
     }
 
     # 8. Repair File Extensions
-    Write-TronLog "Launch job 'Repair file extensions'..."
-    if (-not $Global:TronState.Config.DryRun) {
-        $ExtScript = "$StagePath\repair_file_extensions\repair_file_extensions.bat"
-        if (Test-Path $ExtScript) {
-            Start-Process -FilePath "cmd.exe" -ArgumentList "/c `"$ExtScript`"" -Wait -WindowStyle Hidden
-        }
-    }
+    $ExtensionPath = "$StagePath\repair_file_extensions"
+    Invoke-FileExtensionRepair -ResourcePath $ExtensionPath
 
     Write-TronLog "Stage 4: Repair complete."
 }

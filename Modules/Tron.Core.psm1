@@ -22,10 +22,10 @@ function Write-TronLog {
     # Console Output
     # Console Output
     switch ($Level) {
-        "WARN" { Write-Host $LogLine -ForegroundColor Yellow; Write-Output $LogLine }
-        "ERROR" { Write-Host $LogLine -ForegroundColor Red; Write-Output $LogLine }
-        "DEBUG" { if ($Global:TronState.Config.Verbose) { Write-Host $LogLine -ForegroundColor Gray; Write-Output $LogLine } }
-        Default { Write-Host $LogLine -ForegroundColor White; Write-Output $LogLine }
+        "WARN" { Write-Host $LogLine -ForegroundColor Yellow }
+        "ERROR" { Write-Host $LogLine -ForegroundColor Red }
+        "DEBUG" { if ($Global:TronState.Config.Verbose) { Write-Host $LogLine -ForegroundColor Gray } }
+        Default { Write-Host $LogLine -ForegroundColor White }
     }
 
     # File Output

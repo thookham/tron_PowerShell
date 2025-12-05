@@ -15,6 +15,15 @@ Version legend:
 
 
 #########################
+# v1.0.1 // 2025-12-05  #
+#########################
+ * Refactored Stage 4 (Repair) to Native PowerShell
+ * Replaced purge_windows_*.bat with Tron.Telemetry.psm1
+ * Replaced repair_file_extensions.bat with native PowerShell logic
+ * Added Pester tests for new Telemetry module
+ * Fixed logging bug in Tron.Core.psm1
+
+#########################
 # v1.0.0 // 2025-11-27  #
 #########################
  * Initial release of Tron PowerShell Refactor

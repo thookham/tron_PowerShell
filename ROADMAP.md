@@ -16,6 +16,7 @@ Transform Tron into a modern, cross-platform, enterprise-ready system maintenanc
 ## Current Status (v1.0.x)
 
 ### ✅ Completed
+
 - Native PowerShell rewrite of core functionality
 - Modular architecture (Core + Stages modules)
 - Support for all 8 stages from the original Tron
@@ -27,6 +28,7 @@ Transform Tron into a modern, cross-platform, enterprise-ready system maintenanc
 - Build automation for releases
 
 ### 🚧 Known Limitations
+
 - Stage implementations are not yet feature-complete compared to batch version
 - No automated testing infrastructure
 - No GUI option
@@ -44,8 +46,8 @@ Transform Tron into a modern, cross-platform, enterprise-ready system maintenanc
 
 - [ ] **Complete Stage Implementations**
   - Fully implement all sub-tasks in each stage to match batch version functionality
-  - Eliminate any remaining batch script dependencies
-  - Priority: Stages 3 (Disinfect) and 4 (Repair)
+  - [/] Eliminate any remaining batch script dependencies
+  - Priority: Stages 3 (Disinfect) and 4 (Repair) - **Stage 4 Complete**
 
 - [ ] **Enhanced Error Handling**
   - Implement retry logic for network-dependent operations
@@ -325,17 +327,20 @@ Transform Tron into a modern, cross-platform, enterprise-ready system maintenanc
 We welcome community input on the roadmap!
 
 ### Provide Feedback
+
 - Comment on existing roadmap items in GitHub Discussions
 - Vote for features using issue reactions (👍)
 - Share your use cases and requirements
 
 ### Propose New Features
+
 1. Open a GitHub Discussion in the "Ideas" category
 2. Describe the feature and its benefits
 3. Explain your use case
 4. Gather community feedback
 
 ### Sponsor Development
+
 - Critical features can be prioritized through sponsorship
 - Contact maintainers for enterprise support contracts
 - Contribute code directly via pull requests
@@ -362,12 +367,15 @@ graph TD
 ## Notes on Priorities
 
 ### Security First
+
 Security fixes and vulnerability patches will always take priority over new features.
 
 ### Backward Compatibility
+
 We will maintain backward compatibility within major versions. Breaking changes will only occur in major version updates (e.g., v1.x → v2.0).
 
 ### Community-Driven
+
 Feature prioritization will be influenced by community feedback, contribution levels, and real-world usage patterns.
 
 ---
@@ -384,4 +392,4 @@ Feature prioritization will be influenced by community feedback, contribution le
 
 **Last Updated:** 2025-12-01
 
-**Questions or suggestions?** Open a discussion: https://github.com/thookham/tron_PowerShell/discussions
+**Questions or suggestions?** Open a discussion: <https://github.com/thookham/tron_PowerShell/discussions>
