@@ -15,7 +15,7 @@
     "SkipExpressSettings": false,
     "SkipKaspersky": false,
     "SkipMbam": false,
-    "SkipSophos": false,
+
     "SkipTelemetry": false,
     "SkipUpdate": false,
     "UploadDebugLogs": false
