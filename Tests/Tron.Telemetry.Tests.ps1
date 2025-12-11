@@ -10,28 +10,29 @@ Import-Module "$ScriptDir\Modules\Tron.Telemetry.psm1" -Force
 Describe "Tron.Telemetry Module" {
     
     It "Should export Invoke-TelemetryCleanup" {
-        Get-Command Invoke-TelemetryCleanup -ErrorAction SilentlyContinue | Should -Not BeNullOrEmpty
+        Get-Command Invoke-TelemetryCleanup -ErrorAction SilentlyContinue | Should Not BeNullOrEmpty
     }
 
     It "Should export Invoke-FileExtensionRepair" {
-        Get-Command Invoke-FileExtensionRepair -ErrorAction SilentlyContinue | Should -Not BeNullOrEmpty
+        Get-Command Invoke-FileExtensionRepair -ErrorAction SilentlyContinue | Should Not BeNullOrEmpty
     }
 
     Context "Invoke-TelemetryCleanup" {
         Mock Write-TronLog {}
-        
+            
         It "Should run without errors in basic invocation" {
-            { Invoke-TelemetryCleanup -StagePath "C:\Temp" } | Should -Not -Throw
+            { Invoke-TelemetryCleanup -StagePath "C:\Temp" } | Should Not Throw
         }
     }
 
     Context "Invoke-FileExtensionRepair" {
         Mock Write-TronLog {}
+        # Mock Get-ChildItem to return an empty array to simulate no files needing repair
         Mock Get-ChildItem { return @() }
         Mock Test-Path { return $true }
-
+            
         It "Should run without errors with valid path" {
-            { Invoke-FileExtensionRepair -ResourcePath "C:\Temp" } | Should -Not -Throw
+            { Invoke-FileExtensionRepair -ResourcePath "C:\Temp" } | Should Not Throw
         }
     }
 }

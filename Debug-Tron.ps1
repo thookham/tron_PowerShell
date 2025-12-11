@@ -27,11 +27,11 @@ Import-Module (Join-Path $ScriptPath "Modules\Tron.Core.psm1") -Force
 Import-Module (Join-Path $ScriptPath "Modules\Tron.Stages.psm1") -Force
 
 # 3. Redirect Paths
-$MockPaths = @{
-    Temp        = $MockTemp
-    WindowsTemp = $MockWinTemp
-}
-Set-TronPaths -NewPaths $MockPaths
+$env:TEMP = $MockTemp
+$env:TMP = $MockTemp
+# Note: Cannot easily mock C:\Windows or SystemRoot without breaking .NET calls, 
+# so stages touching SystemRoot should be skipped or mocked via function overrides if needed.
+Write-Host "Sandboxed TEMP to $MockTemp" -ForegroundColor Cyan
 
 # 4. Run Tron Logic
 # We can't just call .\Tron.ps1 because it starts a new process/scope and re-imports modules, resetting paths.
@@ -47,7 +47,7 @@ $Config.Verbose = $true
 $Config.DryRun = $false # We want to actually delete the mock files
 
 # Run Stage 1 (TempClean)
-Invoke-Stage1-TempClean
+Invoke-Stage1
 
 # Verify
 if (Test-Path (Join-Path $MockTemp "garbage.tmp")) {
