@@ -1,6 +1,7 @@
 # Tron.Stages.psm1
 # Stage logic for Tron PowerShell
 
+Import-Module "$PSScriptRoot\Tron.Core.psm1" -ErrorAction SilentlyContinue
 Import-Module "$PSScriptRoot\Tron.Telemetry.psm1" -ErrorAction SilentlyContinue
 
 

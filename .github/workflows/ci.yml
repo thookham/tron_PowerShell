@@ -1,0 +1,30 @@
+name: Build and Test
+
+on:
+  push:
+    branches: [ "master" ]
+  pull_request:
+    branches: [ "master" ]
+
+jobs:
+  build:
+    runs-on: windows-latest
+
+    steps:
+    - uses: actions/checkout@v3
+
+    - name: Run Pester Tests
+      shell: powershell
+      run: |
+        Invoke-Pester -Path .\Tests\*.Tests.ps1 -Passthru
+
+    - name: Build Release
+      shell: powershell
+      run: |
+        .\build_release.ps1
+
+    - name: Upload Artifacts
+      uses: actions/upload-artifact@v3
+      with:
+        name: tron-powershell-release
+        path: releases/

@@ -2,6 +2,17 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.0.2] - 2025-12-11
+
+### Added
+
+- GitHub Actions workflow (`ci.yml`) for automated testing and builds.
+- Unit tests for Stage 1 (TempClean) (`Tests\Tron.Stage1.Tests.ps1`).
+
+### Fixed
+
+- Fixed missing `Tron.Core` dependency in `Tron.Stages.psm1`.
+
 ## [1.0.1] - 2025-12-11
 
 ### Added
