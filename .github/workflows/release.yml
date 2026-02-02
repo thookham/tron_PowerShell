@@ -1,0 +1,26 @@
+name: Build and Release
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+jobs:
+  build:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Install PS2EXE
+        run: Install-Module -Name ps2exe -Force
+
+      - name: Compile Tron.ps1 to EXE
+        run: |
+          Invoke-PS2EXE -InputFile "tron.ps1" -OutputFile "tron.exe" -Title "Tron PowerShell" -Version "1.1.0" -Description "Tron PowerShell Edition" -Verbose
+
+      - name: Create Release
+        uses: softprops/action-gh-release@v1
+        with:
+          files: tron.exe
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

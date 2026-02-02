@@ -50,7 +50,7 @@ catch {
     exit 1
 }
 
-Write-TronLog "Tron PowerShell Edition v1.0.1 Initialized"
+Write-TronLog "Tron PowerShell Edition v1.1.0 Initialized"
 Write-TronLog "Command Line Args: $PSBoundParameters" "DEBUG"
 
 # --- OS & Prerequisite Checks ---

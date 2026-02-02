@@ -14,6 +14,8 @@ Run as Administrator:
 .\tron.ps1
 ```
 
+*(Version 1.1.0)*
+
 ### Parameters
 | Flag | Description |
 |------|-------------|
