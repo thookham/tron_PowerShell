@@ -26,7 +26,8 @@ $ScriptDir = $PSScriptRoot
 
 # Import Modules
 Import-Module "$ScriptDir\Modules\Tron.Core.psm1" -Force
-Import-Module "$ScriptDir\Modules\Tron.Stages.psm1" -Force
+# Load Modular Stages
+Get-ChildItem "$ScriptDir\Modules\Stages\*.psm1" | ForEach-Object { Import-Module $_.FullName -Force }
 
 # --- Configuration & Logging ---
 try {
